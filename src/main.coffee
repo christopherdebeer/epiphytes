@@ -1,6 +1,7 @@
 tts = require('node-tts-api')
 http = require('http')
 fs = require('fs')
+_ = require('underscore')
 mkdirp = require('mkdirp')
 
 assets = require('./assets.coffee')
@@ -15,16 +16,17 @@ mkdirp './assets', (err) ->
 downloadAsset = (url, path) ->
   file = fs.createWriteStream( path )
   request = http.get url, (response) ->
+    console.log "Writing asset to file: #{path}"
     response.pipe( file )
 
 
-for asset of assets
-  console.log "Converting asset: ", asset
-  tts.getSpeech assets[asset], (error, link) ->
+_.each assets, (value, key) ->
+  console.log "Converting asset: ", key
+  tts.getSpeech value, (error, link) =>   
     if error
-      console.log "Error: converting asset::#{asset}", error
+      console.log "Error: converting asset::#{key}", error
     else
       console.log(link)
-      downloadAsset( link, "./assets/#{asset}.mp3")
+      downloadAsset( link, "./assets/#{key}.mp3")
 
 console.log "end"

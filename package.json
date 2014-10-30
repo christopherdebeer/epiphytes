@@ -4,12 +4,14 @@
   "description": "tts",
   "main": "main.coffee",
   "scripts": {
+    "generate-assets": "coffee src/main.coffee",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Christopher de Beer",
   "license": "NONE",
   "dependencies": {
     "mkdirp": "^0.5.0",
-    "node-tts-api": "0.0.5"
+    "node-tts-api": "0.0.5",
+    "underscore": "^1.7.0"
   }
 }
