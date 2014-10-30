@@ -1,0 +1,15 @@
+{
+  "name": "epiphyte",
+  "version": "0.0.0",
+  "description": "tts",
+  "main": "main.coffee",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Christopher de Beer",
+  "license": "NONE",
+  "dependencies": {
+    "mkdirp": "^0.5.0",
+    "node-tts-api": "0.0.5"
+  }
+}
