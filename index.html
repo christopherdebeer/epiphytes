@@ -1,18 +1,201 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<title>Epiphytes Corp.</title>
-		<script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/coffee-script/1.7.1/coffee-script.min.js"></script>
+		<title>Epiphyte Corp.</title>
+		<script src="http://cdnjs.cloudflare.com/ajax/libs/coffee-script/1.7.1/coffee-script.min.js"></script>
+		<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+		<script src="http://cdnjs.cloudflare.com/ajax/libs/howler/1.1.17/howler.min.js"></script>
+		<script src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.7.0/underscore-min.js"></script>
+		<script src="http://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.1.2/backbone-min.js"></script>
+		<script src="http://cdnjs.cloudflare.com/ajax/libs/backbone.marionette/2.2.2/backbone.marionette.min.js"></script>
+		<style>
+
+			html, body {
+				background-color: #efefef;
+				margin: 0;
+				padding: 0;
+			}
+			.numpad-view {
+				max-width: 600px;
+				margin: 0 auto;
+				padding: 1em;
+				list-style: none;
+				overflow: auto;
+			}
+
+			.numpad-view li {
+				margin-right: 1.5%;
+				margin-bottom: 1.5%;
+				width: 32%;
+				box-sizing: border-box;
+				float: left;
+				position: relative;
+				overflow: hidden;
+			}
+
+			.numpad-view li a {
+				display: block;
+				text-align: center;
+				height: 100%;
+				background-color: #EBE1E1;
+				width: auto;
+				padding: 1em;
+				box-sizing: border-box;
+				text-decoration: none;
+				color: #333;
+				font-size: 1.8em;
+				font-family: monospace;
+				position: relative;
+				top: 5px;
+				left: 5px;
+				right: -10px;
+				transition: top .035s ease-in;
+				box-shadow: -1px 3px 3px rgba(0,0,0,0.2);
+			}
+
+			.numpad-view li a .alpha,
+			.numpad-view li a .number {
+				display: block;
+			}
+
+			.numpad-view li a .alpha {
+				font-size: 0.7em;
+				color: #666;
+				min-height: 1.2em;
+			}
+			.numpad-view li a .number {
+				margin: 0.5em;
+			}
+
+			.numpad-view li a:after {
+				content: '';
+				position: absolute;
+				top: 0;
+				bottom: 0;
+				left: 0;
+				right: 0;
+				border-bottom: 11px solid #B6B5B5;
+			}
+
+			.numpad-view li a:active {
+				top: 10px;
+			}
+
+			
+
+			.numpad-view li:nth-child(3n+1) {
+				clear: left;
+			}
+			.numpad-view li:nth-child(3n) {
+				margin-right: 0;
+			}
+		</style>
 	</head>
 	<body>
 
+
 		<script type="text/coffeescript">
 
-			console.log "coffeescript: ok."
+
+			class NumpadView extends Marionette.ItemView
+				tagName: 'ol'
+				className: 'numpad-view'
+				template: _.template """
+					<li>
+						<a href="#">
+							<span class="alpha"></span>
+							<span class="number">1</span>
+						</a>
+					</li>
+					<li>
+						<a href="#">
+							<span class="alpha">ABC</span>
+							<span class="number">2</span>
+						</a>
+					</li>
+					<li>
+						<a href="#">
+							<span class="alpha">DEF</span>
+							<span class="number">3</span>
+						</a>
+					</li>
+					<li>
+						<a href="#">
+							<span class="alpha">GHI</span>
+							<span class="number">4</span>
+						</a>
+					</li>
+					<li>
+						<a href="#">
+							<span class="alpha">JFK</span>
+							<span class="number">5</span>
+						</a>
+					</li>
+					<li>
+						<a href="#">
+							<span class="alpha">MNO</span>
+							<span class="number">6</span>
+						</a>
+					</li>
+					<li>
+						<a href="#">
+							<span class="alpha">PQRS</span>
+							<span class="number">7</span>
+						</a>
+					</li>
+					<li>
+						<a href="#">
+							<span class="alpha">TUV</span>
+							<span class="number">8</span>
+						</a>
+					</li>
+					<li>
+						<a href="#">
+							<span class="alpha">WXYZ</span>
+							<span class="number">9</span>
+						</a>
+					</li>
+					<li>
+						<a href="#">
+							<span class="alpha"></span>
+							<span class="number">*</span>
+						</a>
+					</li>
+					<li>
+						<a href="#">
+							<span class="alpha">+</span>
+							<span class="number">0</span>
+						</a>
+					</li>
+					<li>
+						<a href="#">
+							<span class="alpha"></span>
+							<span class="number">#</span>
+						</a>
+					</li>
+				"""
+
+				events:
+					'click li': '_handlePressButton'
+
+				_handlePressButton: (ev) ->
+					$item = $( ev.target )
+					@trigger "press", $item.find('.number').html()
+
+			appRegion = new Marionette.Region( el: $('body')[0] )
+			numpadView = new NumpadView()
+
+			numpadView.on 'press', (value) -> console.log "pressed #{value}"
+			appRegion.show( numpadView )
+
+			#start = new Howl
+			#	urls: ['assets/start.mp3']
+			#	onend: -> console.log "done start"
+			#	volume: 1
+
+			#start.play()
 
 		</script>
-
-		<script type="text/coffeescript" src="src/app.coffee"></script>
 		
 	</body>
 </html>
