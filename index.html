@@ -192,8 +192,9 @@
 								url:'assets/start.mp3'
 								repeatDelay: 5000
 								actions:
-									"1": 'hold'
-									"2": 'yournumber'
+									"1": 'general'
+									"2": 'start'
+									"2": 'options'
 							hold:
 								url:'assets/hold.mp3'
 								repeatDelay: 5000
@@ -203,6 +204,25 @@
 								repeatDelay: 5000
 								actions:
 									"9": 'start'
+							general:
+								url:'assets/general.mp3'
+								repeatDelay: 5000
+								actions:
+									"1": 'hold'
+									"2": 'yournumber'
+									"9": 'hold'
+							options:
+								url:'assets/options.mp3'
+								repeatDelay: 5000
+								actions:
+									"1": 'options'
+									"9": 'start'
+							recent:
+								url:'assets/recent.mp3'
+								repeatDelay: 5000
+								actions:
+									"1": 'hold'
+									"2": 'start'
 
 					@inputController = new InputController( player: @player )
 
