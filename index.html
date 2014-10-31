@@ -105,8 +105,22 @@
 			.numpad-view li a:active {
 				top: 10px;
 			}
-
 			
+			.numpad-view .hang-up {
+				width :100%;
+				margin: 0;
+				max-width: 100%;
+			}
+			.numpad-view .hang-up a {
+				color: #901B1B;
+				line-height: 2em;
+				background-color: rgb(255, 109, 109);
+				text-shadow: -1px -1px 0px rgba(0, 0, 0, 0.1), 1px 1px 0px rgba(255, 255, 255, 0.5);
+			}
+
+			.numpad-view .hang-up a:after {
+				border-color: #B15656;
+			}
 
 			.numpad-view li:nth-child(3n+1) {
 				clear: left;
@@ -139,9 +153,10 @@
 					@sound.play()
 
 				stop: ->
-					@sound.stop()
+					@sound?.stop()
 
 				setState: (state) ->
+					@sound?.stop()
 					console.log "changing state to: #{ state }.", @states
 					@state = new State( @states[state] )
 					@_createSound()
@@ -226,6 +241,10 @@
 
 					@inputController = new InputController( player: @player )
 
+					@listenTo @numpadView, 'end', =>
+						console.log "hangup"
+						@player.setState( '' )
+
 					@listenTo @numpadView, 'press', (value) =>
 						console.log "pressed #{value}"
 						@inputController.handleInput( value )
@@ -237,7 +256,9 @@
 				onShow: ->
 					@numpadRegion.show( @numpadView )
 					@indicatorRegion.show( @indicatorView )
-					
+				
+				onClose: ->
+					@player.stop()
 
 
 
@@ -317,6 +338,11 @@
 							<span class="number">#</span>
 						</a>
 					</li>
+					<li class="hang-up">
+						<a href="#">
+							<span>Hang Up</span>
+						</a>
+					</li>
 				"""
 
 				initialize: ->
@@ -344,6 +370,10 @@
 
 				events:
 					'click li': '_handlePressButton'
+					'click li.hang-up': '_handleHangUp'
+
+				_handleHangUp:->
+					@trigger "end"
 
 				_handlePressButton: (ev) ->
 					$item = $( ev.target )
