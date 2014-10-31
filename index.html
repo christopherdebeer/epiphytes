@@ -16,14 +16,19 @@
 		<style>
 
 			html, body {
-				background-color: #efefef;
+				background-color: #EEE5C3;
 				margin: 0;
 				padding: 0;
 			}
+
+			.indicator-view {
+				width: 10px;
+
+			}
 			.numpad-view {
-				max-width: 600px;
+				max-width: 300px;
 				margin: 0 auto;
-				padding: 1em;
+				padding: .75em;
 				list-style: none;
 				overflow: auto;
 			}
@@ -36,6 +41,7 @@
 				float: left;
 				position: relative;
 				overflow: hidden;
+				max-width: 6em;
 			}
 
 			.numpad-view li a {
@@ -55,7 +61,9 @@
 				left: 5px;
 				right: -10px;
 				transition: top .035s ease-in;
-				box-shadow: -1px 3px 3px rgba(0,0,0,0.2);
+				box-shadow: -1px 3px 3px rgba(0,0,0,0.1);
+				text-shadow: -1px -1px 0px rgba(0, 0, 0, 0.1), 1px 1px 0px rgba(255, 255, 255, 1);
+				min-height: 4.6em;
 			}
 
 			.numpad-view li a .alpha,
@@ -66,10 +74,9 @@
 			.numpad-view li a .alpha {
 				font-size: 0.7em;
 				color: #666;
-				min-height: 1.2em;
 			}
 			.numpad-view li a .number {
-				margin: 0.5em;
+				margin: 0.3em;
 			}
 
 			.numpad-view li a:after {
@@ -80,6 +87,19 @@
 				left: 0;
 				right: 0;
 				border-bottom: 11px solid #B6B5B5;
+			}
+
+			.numpad-view li a:before {
+				content: '';
+				position: absolute;
+				overflow: hidden;
+				top: 0.5em;
+				bottom: 1em;
+				left: .5em;
+				right: .5em;
+				border-radius: 75%;
+				background-color: transparent;
+				box-shadow: inset 0 15px 20px 5px rgba(0,0,0,0.03);
 			}
 
 			.numpad-view li a:active {
@@ -100,6 +120,98 @@
 
 
 		<script type="text/coffeescript">
+
+			class State extends Backbone.Model
+				initialize: ({ @url, @repeatDelay, @actions }) ->
+
+			class Player extends Backbone.Model
+				initialize: ({state, @states}) ->
+					if state
+						@state = new State( @states[state] )
+						return
+
+					throw new Error('No state provided to Player!')
+
+				play: ->
+					@_createSound() unless @sound
+					console.log "playing state: ", @state
+					console.log "available actions: ", @state.actions
+					@sound.play()
+
+				stop: ->
+					@sound.stop()
+
+				setState: (state) ->
+					console.log "changing state to: #{ state }.", @states
+					@state = new State( @states[state] )
+					@_createSound()
+					@play()
+						
+				_createSound: =>
+					@sound = new Howl
+						urls: [@state.url]
+						onend: =>
+							if @state.repeatDelay
+								setTimeout ( => @sound.play() ), @state.repeatDelay
+						volume: 1
+
+			class InputController extends Backbone.Model
+				initialize: ({ @player }) ->
+				handleInput: (value) ->
+					actions = @player.state.actions
+					@player.stop()
+					@player.setState( actions[value] ) if actions?[value]
+
+
+			class IndicatorView extends Marionette.ItemView
+				tagName: 'div'
+				className: 'indicator-view'
+				template: _.template ""
+
+
+			class AppView extends Marionette.LayoutView
+				className: 'app-view'
+				template: _.template """
+					<div class="indicator-region"></div>
+					<div class="numpad-region"></div>
+				"""
+				regions:
+					indicatorRegion: '.indicator-region'
+					numpadRegion: '.numpad-region'
+
+				initialize: ->
+					@numpadView = new NumpadView()
+					@indicatorView = new IndicatorView()
+					@player = new Player
+						state: 'start'
+						states:
+							start:
+								url:'assets/start.mp3'
+								repeatDelay: 5000
+								actions:
+									"1": 'hold'
+									"2": 'yournumber'
+							hold:
+								url:'assets/hold.mp3'
+								repeatDelay: 5000
+
+							yournumber:
+								url:'assets/yournumber.mp3'
+								repeatDelay: 5000
+								actions:
+									"9": 'start'
+
+					@inputController = new InputController( player: @player )
+
+					@listenTo @numpadView, 'press', (value) =>
+						console.log "pressed #{value}"
+						@inputController.handleInput( value )
+				
+				onShow: ->
+					@numpadRegion.show( @numpadView )
+					@indicatorRegion.show( @indicatorView )
+					@player.play()
+
 
 
 			class NumpadView extends Marionette.ItemView
@@ -180,25 +292,43 @@
 					</li>
 				"""
 
+				initialize: ->
+					@beepSound = new Howl
+						urls: ['sfx/beep2.mp3']
+						sprite:
+							short: [0, 100]
+							medium: [0, 1500]
+							long: [0, 3000]
+						volume: 1
+
+					@toneSound = new Howl
+						urls: ['sfx/dialtone.mp3']
+						volume: 1
+						
+					@clickSound = new Howl
+						urls: ['sfx/click.mp3']
+						volume: 1
+
 				events:
 					'click li': '_handlePressButton'
 
 				_handlePressButton: (ev) ->
 					$item = $( ev.target )
+					@clickSound.play()
+					@beepSound.play( 'short' )
 					@trigger "press", $item.find('.number').html()
 
+				onShow: ->
+					@toneSound.play()
+
 			appRegion = new Marionette.Region( el: $('body')[0] )
-			numpadView = new NumpadView()
+			appView = new AppView()
 
-			numpadView.on 'press', (value) -> console.log "pressed #{value}"
-			appRegion.show( numpadView )
+			$ -> appRegion.show( appView )
 
-			#start = new Howl
-			#	urls: ['assets/start.mp3']
-			#	onend: -> console.log "done start"
-			#	volume: 1
+			
 
-			#start.play()
+			
 
 		</script>
 		
