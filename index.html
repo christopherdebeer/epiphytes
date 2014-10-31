@@ -152,7 +152,10 @@
 						urls: [@state.url]
 						onend: =>
 							if @state.repeatDelay
-								setTimeout ( => @sound.play() ), @state.repeatDelay
+								setTimeout ( => 
+									console.log "repeating sound after #{ @state.repeatDelay } miliseconds."
+									@sound.play() 
+								), @state.repeatDelay
 						volume: 1
 
 			class InputController extends Backbone.Model
@@ -206,11 +209,15 @@
 					@listenTo @numpadView, 'press', (value) =>
 						console.log "pressed #{value}"
 						@inputController.handleInput( value )
-				
+					
+					@listenTo @numpadView, 'done:ring', =>
+						console.log "done ringing"
+						@player.setState( 'start' )
+
 				onShow: ->
 					@numpadRegion.show( @numpadView )
 					@indicatorRegion.show( @indicatorView )
-					@player.play()
+					
 
 
 
@@ -301,9 +308,15 @@
 							long: [0, 3000]
 						volume: 1
 
-					@toneSound = new Howl
-						urls: ['sfx/dialtone.mp3']
+					@ringSound = new Howl
+						urls: ['sfx/ringing.mp3']
 						volume: 1
+						sprite:
+							short: [0, 5000]
+							medium: [0, 10000]
+							long: [0, 30000]
+						onend: =>
+							@trigger( 'done:ring' )
 						
 					@clickSound = new Howl
 						urls: ['sfx/click.mp3']
@@ -319,7 +332,7 @@
 					@trigger "press", $item.find('.number').html()
 
 				onShow: ->
-					@toneSound.play()
+					@ringSound.play( 'short' )
 
 			appRegion = new Marionette.Region( el: $('body')[0] )
 			appView = new AppView()
