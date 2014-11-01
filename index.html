@@ -211,7 +211,7 @@
 
 				_startCall: =>
 					console.log "startcall"
-					@longBeepSound.play( 'long' ).then =>
+					@longBeepSound.play().then =>
 						console.log "ring"
 						@ringSound.play( 'short' ).then =>
 							@running = true
