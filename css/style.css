@@ -1,0 +1,121 @@
+html, body {
+	background-color: #EEE5C3;
+	margin: 0;
+	padding: 0;
+	-webkit-tap-highlight-color: transparent;
+}
+
+.indicator-view {
+	width: 10px;
+
+}
+.numpad-view {
+	max-width: 300px;
+	margin: 0 auto;
+	padding: .75em;
+	list-style: none;
+	overflow: auto;
+}
+
+.numpad-view li {
+	margin-right: 1.5%;
+	margin-bottom: 1.5%;
+	width: 32%;
+	box-sizing: border-box;
+	float: left;
+	position: relative;
+	overflow: hidden;
+	max-width: 6em;
+}
+
+.numpad-view li a {
+	display: block;
+	text-align: center;
+	height: 100%;
+	background-color: #EBE1E1;
+	width: auto;
+	padding: 1em;
+	box-sizing: border-box;
+	text-decoration: none;
+	color: #333;
+	font-size: 1.4em;
+	font-family: monospace;
+	position: relative;
+	top: 5px;
+	left: 5px;
+	right: -10px;
+	transition: top .035s ease-in;
+	box-shadow: -1px 3px 3px rgba(0,0,0,0.1);
+	text-shadow: -1px -1px 0px rgba(0, 0, 0, 0.1), 1px 1px 0px rgba(255, 255, 255, 1);
+	min-height: 4.6em;
+}
+
+.numpad-view li a .alpha,
+.numpad-view li a .number {
+	display: block;
+}
+
+.numpad-view li a .alpha {
+	font-size: 0.7em;
+	color: #666;
+}
+.numpad-view li a .number {
+	margin: 0.3em;
+}
+
+.numpad-view li a:after {
+	content: '';
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	border-bottom: 11px solid #B6B5B5;
+}
+
+.numpad-view li a:before {
+	content: '';
+	position: absolute;
+	overflow: hidden;
+	top: 0.5em;
+	bottom: 1em;
+	left: .5em;
+	right: .5em;
+	border-radius: 75%;
+	background-color: transparent;
+	box-shadow: inset 0 15px 20px 5px rgba(0,0,0,0.03);
+}
+
+.numpad-view li a:active {
+	top: 10px;
+}
+
+.numpad-view .special {
+	width: 32%;
+	margin-bottom: 0;
+	max-width: 100%;
+}
+
+.numpad-view .hang-up {
+	width :64%;
+	margin: 0; 
+}
+
+.numpad-view .hang-up a {
+	color: #901B1B;
+	line-height: 2em;
+	background-color: rgb(255, 109, 109);
+	text-shadow: -1px -1px 0px rgba(0, 0, 0, 0.1), 1px 1px 0px rgba(255, 255, 255, 0.5);
+}
+
+.numpad-view .engage a:after,
+.numpad-view .hang-up a:after {
+	border-color: #B15656;
+}
+
+.numpad-view li:nth-child(3n+1) {
+	clear: left;
+}
+.numpad-view li:nth-child(3n) {
+	margin-right: 0;
+}

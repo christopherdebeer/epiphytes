@@ -13,127 +13,43 @@
 		<script src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.7.0/underscore-min.js"></script>
 		<script src="http://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.1.2/backbone-min.js"></script>
 		<script src="http://cdnjs.cloudflare.com/ajax/libs/backbone.marionette/2.2.2/backbone.marionette.min.js"></script>
-		<style>
+		
+		<link rel="stylesheet" href="css/style.css">
 
-			html, body {
-				background-color: #EEE5C3;
-				margin: 0;
-				padding: 0;
-			}
-
-			.indicator-view {
-				width: 10px;
-
-			}
-			.numpad-view {
-				max-width: 300px;
-				margin: 0 auto;
-				padding: .75em;
-				list-style: none;
-				overflow: auto;
-			}
-
-			.numpad-view li {
-				margin-right: 1.5%;
-				margin-bottom: 1.5%;
-				width: 32%;
-				box-sizing: border-box;
-				float: left;
-				position: relative;
-				overflow: hidden;
-				max-width: 6em;
-			}
-
-			.numpad-view li a {
-				display: block;
-				text-align: center;
-				height: 100%;
-				background-color: #EBE1E1;
-				width: auto;
-				padding: 1em;
-				box-sizing: border-box;
-				text-decoration: none;
-				color: #333;
-				font-size: 1.8em;
-				font-family: monospace;
-				position: relative;
-				top: 5px;
-				left: 5px;
-				right: -10px;
-				transition: top .035s ease-in;
-				box-shadow: -1px 3px 3px rgba(0,0,0,0.1);
-				text-shadow: -1px -1px 0px rgba(0, 0, 0, 0.1), 1px 1px 0px rgba(255, 255, 255, 1);
-				min-height: 4.6em;
-			}
-
-			.numpad-view li a .alpha,
-			.numpad-view li a .number {
-				display: block;
-			}
-
-			.numpad-view li a .alpha {
-				font-size: 0.7em;
-				color: #666;
-			}
-			.numpad-view li a .number {
-				margin: 0.3em;
-			}
-
-			.numpad-view li a:after {
-				content: '';
-				position: absolute;
-				top: 0;
-				bottom: 0;
-				left: 0;
-				right: 0;
-				border-bottom: 11px solid #B6B5B5;
-			}
-
-			.numpad-view li a:before {
-				content: '';
-				position: absolute;
-				overflow: hidden;
-				top: 0.5em;
-				bottom: 1em;
-				left: .5em;
-				right: .5em;
-				border-radius: 75%;
-				background-color: transparent;
-				box-shadow: inset 0 15px 20px 5px rgba(0,0,0,0.03);
-			}
-
-			.numpad-view li a:active {
-				top: 10px;
-			}
-			
-			.numpad-view .hang-up {
-				width :100%;
-				margin: 0;
-				max-width: 100%;
-			}
-			.numpad-view .hang-up a {
-				color: #901B1B;
-				line-height: 2em;
-				background-color: rgb(255, 109, 109);
-				text-shadow: -1px -1px 0px rgba(0, 0, 0, 0.1), 1px 1px 0px rgba(255, 255, 255, 0.5);
-			}
-
-			.numpad-view .hang-up a:after {
-				border-color: #B15656;
-			}
-
-			.numpad-view li:nth-child(3n+1) {
-				clear: left;
-			}
-			.numpad-view li:nth-child(3n) {
-				margin-right: 0;
-			}
-		</style>
 	</head>
 	<body>
 
 
 		<script type="text/coffeescript">
+
+			class Sound extends Backbone.Model
+				initialize: ({urls, volume, sprite, repeatDelay}) ->
+					@set 'clip', new Howl
+						urls: urls
+						sprite: sprite
+						onend: @_handleOnEnd
+						volume: volume
+				stop: ->
+					@get( 'clip' ).stop()
+					this
+
+				play: (sprite) ->
+					@get( 'clip' ).play( sprite )
+					this
+
+				then: (cb) ->
+					@onEndCallback = cb
+					this
+
+				_handleOnEnd: =>
+					@onEndCallback?()
+					if @get 'repeatDelay'
+						setTimeout ( =>
+							console.log "repeating sound", this
+							@play()
+
+						), @repeatDelay
+
 
 			class State extends Backbone.Model
 				initialize: ({ @url, @repeatDelay, @actions }) ->
@@ -163,14 +79,8 @@
 					@play()
 						
 				_createSound: =>
-					@sound = new Howl
+					@sound = new Sound
 						urls: [@state.url]
-						onend: =>
-							if @state.repeatDelay
-								setTimeout ( => 
-									console.log "repeating sound after #{ @state.repeatDelay } miliseconds."
-									@sound.play() 
-								), @state.repeatDelay
 						volume: 1
 
 			class InputController extends Backbone.Model
@@ -265,6 +175,64 @@
 			class NumpadView extends Marionette.ItemView
 				tagName: 'ol'
 				className: 'numpad-view'
+
+				initialize: ->
+
+					@longBeepSound = new Sound
+						urls: ['sfx/beep.mp3']
+						volume: 1
+
+					@beepSound = new Sound
+						urls: ['sfx/beep2.mp3']
+						sprite:
+							short: [0, 100]
+							medium: [0, 1500]
+							long: [0, 3000]
+						volume: 1
+
+					@ringSound = new Sound
+						urls: ['sfx/ringing.mp3']
+						volume: 1
+						sprite:
+							short: [0, 5000]
+							medium: [0, 10000]
+							long: [0, 30000]
+						
+					@clickSound = new Sound
+						urls: ['sfx/click.mp3']
+						volume: 1
+
+				events:
+					'click li': '_handlePressButton'
+					'click li.hang-up': '_handleHangUp'
+
+				_handleHangUp: ->
+					window.location.reload()
+
+				_startCall: =>
+					console.log "startcall"
+					@longBeepSound.play( 'long' ).then =>
+						console.log "ring"
+						@ringSound.play( 'short' ).then =>
+							@running = true
+							@trigger( 'done:ring' )
+
+				_handlePressButton: (ev) ->
+					@beepSound.stop()
+					@ringSound.stop()
+
+					console.log @clickSound.play()
+					@beepSound.play( 'short' )
+
+					$item = $( ev.target )
+					val = $item.find('.number').html()
+					if val is 'R'
+						@_startCall()
+					else
+						@trigger(  "press", val ) if @running
+
+				onShow: ->
+
 				template: _.template """
 					<li>
 						<a href="#">
@@ -338,51 +306,19 @@
 							<span class="number">#</span>
 						</a>
 					</li>
-					<li class="hang-up">
+					<li class="mem special">
+						<a href="#">
+							<span class="alpha">MEM</span>
+							<span class="number">R</span>
+						</a>
+					</li>
+					<li class="hang-up special">
 						<a href="#">
 							<span>Hang Up</span>
 						</a>
 					</li>
 				"""
 
-				initialize: ->
-					@beepSound = new Howl
-						urls: ['sfx/beep2.mp3']
-						sprite:
-							short: [0, 100]
-							medium: [0, 1500]
-							long: [0, 3000]
-						volume: 1
-
-					@ringSound = new Howl
-						urls: ['sfx/ringing.mp3']
-						volume: 1
-						sprite:
-							short: [0, 5000]
-							medium: [0, 10000]
-							long: [0, 30000]
-						onend: =>
-							@trigger( 'done:ring' )
-						
-					@clickSound = new Howl
-						urls: ['sfx/click.mp3']
-						volume: 1
-
-				events:
-					'click li': '_handlePressButton'
-					'click li.hang-up': '_handleHangUp'
-
-				_handleHangUp:->
-					@trigger "end"
-
-				_handlePressButton: (ev) ->
-					$item = $( ev.target )
-					@clickSound.play()
-					@beepSound.play( 'short' )
-					@trigger "press", $item.find('.number').html()
-
-				onShow: ->
-					@ringSound.play( 'short' )
 
 			appRegion = new Marionette.Region( el: $('body')[0] )
 			appView = new AppView()
