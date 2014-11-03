@@ -19,7 +19,7 @@
 	</head>
 	<body>
 
-
+		<script src="./assets.js"></script>
 		<script type="text/coffeescript">
 
 			class Sound extends Backbone.Model
@@ -42,6 +42,7 @@
 					this
 
 				_handleOnEnd: =>
+					console.log "handle onend"
 					@onEndCallback?()
 					if @get 'repeatDelay'
 						setTimeout ( =>
@@ -50,45 +51,59 @@
 
 						), @repeatDelay
 
-
 			class State extends Backbone.Model
-				initialize: ({ @url, @repeatDelay, @actions }) ->
+				initialize: ({url}) ->
+					@set 'sound', new Sound
+						urls: [url]
+						volume: 1
+
+
+			class StateCollection extends Backbone.Collection
+				initialize: (options)->
+
+				model: State
+				getStart: ->
+					@findWhere( id: 'start' )
+				getState: (state) ->
+					@findWhere( id: state )
 
 			class Player extends Backbone.Model
-				initialize: ({state, @states}) ->
-					if state
-						@state = new State( @states[state] )
-						return
-
-					throw new Error('No state provided to Player!')
+				defaults:
+					state: null
+					states: null
+				initialize: ({@states}) ->						
+					@set( 'state', null )
+					@on 'change:state', @_handleChangeState
+					@set( 'state', @states.getStart() )
 
 				play: ->
-					@_createSound() unless @sound
-					console.log "playing state: ", @state
-					console.log "available actions: ", @state.actions
-					@sound.play()
+					state = @get( 'state' )
+					console.log "playing state: ", state.get( 'id' )
+					console.log "available actions: ", state.get( 'actions' )
+					state.get( 'sound' )?.play()
 
 				stop: ->
-					@sound?.stop()
+					@get( 'state' )?.get( 'sound' )?.stop()
 
 				setState: (state) ->
-					@sound?.stop()
-					console.log "changing state to: #{ state }.", @states
-					@state = new State( @states[state] )
-					@_createSound()
-					@play()
-						
-				_createSound: =>
-					@sound = new Sound
-						urls: [@state.url]
-						volume: 1
+					if @states.getState( state )
+						@stop()
+						@set( 'state', @states.getState( state ) )
+						@play()
+					else
+						@set( 'state', @states.getState( 'nosuchstateasset' ) )
+
+				_handleChangeState: ->
+					console.log "handle change state?", arguments
 
 			class InputController extends Backbone.Model
 				initialize: ({ @player }) ->
 				handleInput: (value) ->
-					actions = @player.state.actions
+					state = @player.get( 'state' )
+					actions = state.get( 'actions' )
 					@player.stop()
 					@player.setState( actions[value] ) if actions?[value]
+					
 
 
 			class IndicatorView extends Marionette.ItemView
@@ -123,47 +138,11 @@
 					indicatorRegion: '.indicator-region'
 					numpadRegion: '.numpad-region'
 
-				initialize: ->
+				initialize: ({ states }) ->
 					@numpadView = new NumpadView()
 					@indicatorView = new IndicatorView()
 					@player = new Player
-						state: 'start'
-						states:
-							start:
-								url:'assets/start.mp3'
-								repeatDelay: 5000
-								actions:
-									"1": 'general'
-									"2": 'start'
-									"3": 'options'
-							hold:
-								url:'assets/hold.mp3'
-								repeatDelay: 5000
-
-							yournumber:
-								url:'assets/yournumber.mp3'
-								repeatDelay: 5000
-								actions:
-									"9": 'start'
-							general:
-								url:'assets/general.mp3'
-								repeatDelay: 5000
-								actions:
-									"1": 'hold'
-									"2": 'yournumber'
-									"9": 'hold'
-							options:
-								url:'assets/options.mp3'
-								repeatDelay: 5000
-								actions:
-									"1": 'options'
-									"9": 'start'
-							recent:
-								url:'assets/recent.mp3'
-								repeatDelay: 5000
-								actions:
-									"1": 'hold'
-									"2": 'start'
+						states: states
 
 					@inputController = new InputController( player: @player )
 
@@ -174,8 +153,6 @@
 					@listenTo @numpadView, 'press', (value) =>
 						console.log "pressed #{value}"
 						@inputController.handleInput( value )
-						@indicatorView.toggleFunc( true )
-						setTimeout (=> @indicatorView.toggleFunc( false ) ), 100
 					
 					@listenTo @numpadView, 'done:ring', =>
 						console.log "done ringing"
@@ -337,9 +314,16 @@
 					</li>
 				"""
 
+			
+
+			states = new StateCollection( _.values( window.RT023_ASSETS ) )
 
 			appRegion = new Marionette.Region( el: $('body')[0] )
-			appView = new AppView()
+			appView = new AppView( states: states )
+
+			window.RT023_term_override =
+				setState: (state) -> appView.player.setState( state )
+				getStates: -> states
 
 			$ -> appRegion.show( appView )
 
