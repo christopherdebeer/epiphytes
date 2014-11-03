@@ -1,14 +1,57 @@
 html, body {
 	background-color: #EEE5C3;
-	margin: 0;
+	margin: 0 auto;
 	padding: 0;
 	-webkit-tap-highlight-color: transparent;
+	max-width: 320px;
+}
+
+.reg {
+	margin: 0;
+	padding: 0 1.4em;
+	font-family: monospace;
+	text-align: right;
+	color: #666;
 }
 
 .indicator-view {
-	width: 10px;
-
+	box-sizing: border-box;
+	list-style: none;
+	margin: 0 auto;
+	overflow: auto;
+	padding: 1em;
+	padding-bottom: 0;
 }
+
+.indicator-view li {
+	float: left;
+	margin-right: 1em;
+	vertical-align: baseline;
+}
+
+.indicator-view li .light {
+	width: 1em;
+	height: 1em;
+	margin-right: .5em;
+	display: inline-block;
+	background-color: #D8D8D8;
+	border-radius: 50%;
+	box-shadow: rgba(236, 8, 8, 0) 0 -1px 7px 1px, inset rgba(102, 0, 0, 0.22) 0px -2px 8px, rgba(250, 106, 106, 0) 0 2px 12px;
+}
+.indicator-view li.on .light {
+	background-color: #FF1C1C;
+	box-shadow: rgba(236, 8, 8, 0.76) 0 -1px 7px 1px, inset rgba(102, 0, 0, 1) 0px -2px 8px, rgba(250, 106, 106, 1) 0 2px 12px;
+}
+
+.indicator-view li .label {
+	display: inline-block;
+	font-family: monospace;
+	position: relative;
+	top: -.2em;
+}
+
+
+
 .numpad-view {
 	max-width: 300px;
 	margin: 0 auto;
@@ -47,7 +90,7 @@ html, body {
 	transition: top .035s ease-in;
 	box-shadow: -1px 3px 3px rgba(0,0,0,0.1);
 	text-shadow: -1px -1px 0px rgba(0, 0, 0, 0.1), 1px 1px 0px rgba(255, 255, 255, 1);
-	min-height: 4.6em;
+	min-height: 4.1em;
 }
 
 .numpad-view li a .alpha,
@@ -60,7 +103,7 @@ html, body {
 	color: #666;
 }
 .numpad-view li a .number {
-	margin: 0.3em;
+	margin: 0.1em 0 0.3em;
 }
 
 .numpad-view li a:after {
