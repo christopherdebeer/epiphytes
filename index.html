@@ -92,9 +92,24 @@
 
 
 			class IndicatorView extends Marionette.ItemView
-				tagName: 'div'
+				tagName: 'ol'
 				className: 'indicator-view'
-				template: _.template ""
+				template: _.template """
+					<li class="message">
+						<div class="light"></div>
+						<div class="label">Message</div>
+					</li>
+					<li class="func">
+						<div class="light"></div>
+						<div class="label">Func</div>
+					</li>
+				"""
+				_toggle: (cls, force) =>
+					@$( cls ).toggleClass( 'on', force )
+
+				toggleMessage: (force) -> @_toggle( '.message', force )
+				toggleFunc: (force) -> @_toggle( '.func', force )
+
 
 
 			class AppView extends Marionette.LayoutView
@@ -102,6 +117,7 @@
 				template: _.template """
 					<div class="indicator-region"></div>
 					<div class="numpad-region"></div>
+					<p class="reg">&copy; 452 Corp. RT023</p>
 				"""
 				regions:
 					indicatorRegion: '.indicator-region'
@@ -158,6 +174,8 @@
 					@listenTo @numpadView, 'press', (value) =>
 						console.log "pressed #{value}"
 						@inputController.handleInput( value )
+						@indicatorView.toggleFunc( true )
+						setTimeout (=> @indicatorView.toggleFunc( false ) ), 100
 					
 					@listenTo @numpadView, 'done:ring', =>
 						console.log "done ringing"
@@ -229,7 +247,7 @@
 					if val is 'R'
 						@_startCall()
 					else
-						@trigger(  "press", val ) if @running
+						@trigger(  "press", val )
 
 				onShow: ->
 
@@ -296,7 +314,7 @@
 					</li>
 					<li>
 						<a href="#">
-							<span class="alpha">+</span>
+							<span class="alpha">OPER</span>
 							<span class="number">0</span>
 						</a>
 					</li>

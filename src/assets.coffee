@@ -1,9 +1,10 @@
 module.exports =
   start: """
-    Welcome to Epiphytes Corp.
+    You have reached to remote terminal access service for Corporation 452.
     Press 1, for general enquiries.
-    Press 2, for existential queries.
-    Press 3, for more Options.
+    Press 2, to access services relating to our remote terminal products.
+    Press 3, for more information regarding any of our products.
+    For HR related queries please press 7.
     To return to the main menu, Press 9.
   """
   general: """
