@@ -6,6 +6,7 @@
 		<meta name="apple-mobile-web-app-capable" content="yes" />
 		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 		<meta name="viewport" content="width = device-width, initial-scale = 1, user-scalable = no" />
+		<link rel="apple-touch-startup-image" href="images/splash.png">
 
 		<script src="http://cdnjs.cloudflare.com/ajax/libs/coffee-script/1.7.1/coffee-script.min.js"></script>
 		<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
@@ -206,6 +207,7 @@
 					'click li.hang-up': '_handleHangUp'
 
 				_handleHangUp: ->
+					@running = false
 					window.location.reload()
 
 				_startCall: =>
@@ -230,7 +232,7 @@
 					if val is 'R'
 						@_startCall()
 					else
-						@trigger(  "press", val )
+						@trigger(  "press", val ) if @running
 
 				onShow: ->
 
