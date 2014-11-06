@@ -22,6 +22,7 @@
 		<script src="./assets.js"></script>
 		<script type="text/coffeescript">
 
+
 			class Sound extends Backbone.Model
 				initialize: ({urls, volume, sprite, repeatDelay}) ->
 					@set 'clip', new Howl
@@ -52,7 +53,10 @@
 						), @repeatDelay
 
 			class State extends Backbone.Model
-				initialize: ({url}) ->
+				initialize: ({url, text}) ->
+					@_createSound( url )
+					
+				_createSound: (url) =>
 					@set 'sound', new Sound
 						urls: [url]
 						volume: 1
@@ -89,9 +93,9 @@
 					if @states.getState( state )
 						@stop()
 						@set( 'state', @states.getState( state ) )
-						@play()
 					else
 						@set( 'state', @states.getState( 'nosuchstateasset' ) )
+					@play()
 
 				_handleChangeState: ->
 					console.log "handle change state?", arguments
@@ -102,7 +106,7 @@
 					state = @player.get( 'state' )
 					actions = state.get( 'actions' )
 					@player.stop()
-					@player.setState( actions[value] ) if actions?[value]
+					@player.setState( actions[value] )
 					
 
 
@@ -220,6 +224,8 @@
 					@beepSound.play( 'short' )
 
 					$item = $( ev.target )
+					$item.addClass( 'active' )
+					setTimeout ( -> $item.removeClass( 'active' ) ), 100
 					val = $item.find('.number').html()
 					if val is 'R'
 						@_startCall()
@@ -319,7 +325,7 @@
 			states = new StateCollection( _.values( window.RT023_ASSETS ) )
 
 			appRegion = new Marionette.Region( el: $('body')[0] )
-			appView = new AppView( states: states )
+			window.appView = appView = new AppView( states: states )
 
 			window.RT023_term_override =
 				setState: (state) -> appView.player.setState( state )

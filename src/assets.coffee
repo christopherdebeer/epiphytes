@@ -2,9 +2,11 @@ module.exports = RT023_ASSETS =
   nosuchstateasset:
     text: """
       ERROR! Status: 4 0 4.
+      Press 1, to be transfered to the referrer.
       To return to the main menu, Press 9.
     """
     actions:
+      "1": "<PREVIOUS>"
       "9": "start"
   start:
     text: """
@@ -78,6 +80,29 @@ module.exports = RT023_ASSETS =
     actions:
       "9": "start"
 
+  terminalproducts:
+    text: """
+      To recieve a full catalogue of terminal products press 1.
+      If you are trying to register a terminal product press 2
+    """
+    repeatDelay: 3000
+    actions:
+      "1": "fullcatalogue"
+      "2": "registerterminal"
+
+  fullcatalogue:
+    text: """
+      The Full catalogue contains a total of 45 products...
+      For Products starting with letters A through E press 1.
+      For Products starting with letters F through J press 2.
+      For Products starting with letters K through O press 4.
+      Blah
+      Blah
+      Blah
+    """
+    repeatDelay: 3000
+    actions:
+      "9": "start"
   options:
     text: """
       There are many options that could be here.
