@@ -1,12 +1,11 @@
 module.exports = RT023_ASSETS =
   nosuchstateasset:
     text: """
-      ERROR! Status: 4 0 4.
-      Press 1, to be transfered to the referrer.
+      ERROR! Status: 4. 0. 4.
       To return to the main menu, Press 9.
     """
+    repeatDelay: 5000
     actions:
-      "1": "<PREVIOUS>"
       "9": "start"
   start:
     text: """
@@ -74,7 +73,15 @@ module.exports = RT023_ASSETS =
 
   customersupport:
     text: """
-      Please hold, one of our operators will be with you shortly.
+      Please hold... ... one of our operators will be with you shortly.
+    """ 
+    repeatDelay: 5000
+    actions:
+      "9": "start"
+
+  hr:
+    text: """
+      Please hold...  ... one of our operators will be with you shortly.
     """ 
     repeatDelay: 5000
     actions:
@@ -93,36 +100,32 @@ module.exports = RT023_ASSETS =
   fullcatalogue:
     text: """
       The Full catalogue contains a total of 45 products...
-      For Products starting with letters A through E press 1.
-      For Products starting with letters F through J press 2.
-      For Products starting with letters K through O press 4.
+      For Products starting with letters A. through E., press 1.
+      For Products starting with letters F. through J., press 2.
+      For Products starting with letters K. through O., press 4.
       Blah
       Blah
       Blah
+      To return to the main menu, Press 9.
     """
     repeatDelay: 3000
     actions:
       "9": "start"
-  options:
+
+  products:
     text: """
-      There are many options that could be here.
-      If you'd like a brief summary Press 1.
-      Press 2 to hear the most recent option.
-      To return to the main menu press 9.
+      The Full catalogue contains a total of 45 products...
+      For Products starting with letters A. through E., press 1.
+      For Products starting with letters F. through J., press 2.
+      For Products starting with letters K. through O., press 4.
+      Blah
+      Blah
+      Blah
+      To return to the main menu, Press 9.
     """
-  recent:
-    text: """
-      Would you like to include shipping fees with your tansaction?
-      Press 1 to confirm.
-      Press 2 to return to the main menu.
-    """
-  hold:
-    text: """
-    	please hold, ... Your call is important to us.
-    """
-  yournumber:
-    text: """
-    	Please note down your reference number... 
-    	Your twelve digit reference number is: 4 8 7. 2 3 6. 6 F 3. G S 4.
-      To return to the main menu press 9.
-    """
+    repeatDelay: 3000
+    actions:
+      "9": "start"
+
+
+
