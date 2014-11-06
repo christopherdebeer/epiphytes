@@ -129,7 +129,8 @@ html, body {
 	box-shadow: inset 0 15px 20px 5px rgba(0,0,0,0.03);
 }
 
-.numpad-view li a:active {
+.numpad-view li a:active,
+.numpad-view li a.active {
 	top: 10px;
 }
 
