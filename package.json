@@ -4,7 +4,8 @@
   "description": "tts",
   "main": "main.coffee",
   "scripts": {
-    "generate-assets": "coffee src/main.coffee",
+    "generate-assets": "coffee src/generate-assets.coffee",
+    "compile": "browserify -t coffeeify src/app.coffee > public/bundle.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Christopher de Beer",
@@ -12,6 +13,15 @@
   "dependencies": {
     "mkdirp": "^0.5.0",
     "node-tts-api": "0.0.5",
-    "underscore": "^1.7.0"
+    "underscore": "^1.7.0",
+    "coffeeify": "*",
+    "body-parser": "^1.5.2",
+    "errorhandler": "^1.1.1",
+    "express": "^4.8.0",
+    "express-session": "^1.7.2",
+    "jade": "^1.5.0",
+    "method-override": "^2.1.2",
+    "morgan": "^1.2.2",
+    "serve-favicon": "^2.0.1"
   }
 }

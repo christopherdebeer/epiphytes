@@ -6,8 +6,8 @@ mkdirp = require('mkdirp')
 
 assets = require('./assets.coffee')
 
-console.log "Creating assets folder: ./assets"
-mkdirp './assets', (err) ->
+console.log "Creating assets folder: ./public/assets"
+mkdirp './public/assets', (err) ->
     if err
       console.error err
     else
@@ -20,7 +20,7 @@ downloadAsset = (url, path) ->
     response.pipe( file )
 
 saveAssetJSONP = ->
-  fs.writeFile "./assets.js", "var RT023_ASSETS = #{ JSON.stringify(assets) };", (err) ->
+  fs.writeFile "./public/assets.js", "var RT023_ASSETS = #{ JSON.stringify(assets) };", (err) ->
     if err
         console.log( err )
     else
@@ -33,8 +33,8 @@ _.each assets, (asset, key) ->
       console.log "Error: converting asset::#{key}", error
     else
       console.log(link)
-      downloadAsset( link, "./assets/#{key}.mp3")
-      assets[key].url = "assets/#{key}.mp3"
+      downloadAsset( link, "./public/assets/#{key}.mp3")
+      assets[key].url = "/assets/#{key}.mp3"
       assets[key].id = key
       saveAssetJSONP()
 

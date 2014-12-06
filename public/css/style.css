@@ -1,5 +1,5 @@
 html, body {
-	background-color: #EEE5C3;
+	background-color: #C8C6FF;
 	margin: 0 auto;
 	padding: 0;
 	-webkit-tap-highlight-color: transparent;
@@ -27,6 +27,18 @@ html, body {
 	float: left;
 	margin-right: 1em;
 	vertical-align: baseline;
+	position: relative;
+}
+
+.indicator-view li:after {
+	position: absolute;
+	width: 1em;
+	height: 1em;
+	background-color: transparent;
+	content: "";
+	border-radius: 1em;
+	box-shadow: inset rgba(255, 255, 255, 0.74) 0px 2px 2px, rgba(255, 255, 255, 0.58) 0px -2px 2px;
+	top: 2px;
 }
 
 .indicator-view li .light {
@@ -34,13 +46,14 @@ html, body {
 	height: 1em;
 	margin-right: .5em;
 	display: inline-block;
-	background-color: #D8D8D8;
+	background-color: rgba(255, 255, 255, 0);
 	border-radius: 50%;
-	box-shadow: rgba(236, 8, 8, 0) 0 -1px 7px 1px, inset rgba(102, 0, 0, 0.22) 0px -2px 8px, rgba(250, 106, 106, 0) 0 2px 12px;
+	box-shadow: rgba(255, 255, 255, 0) 0 -1px 7px 1px, inset rgba(102, 0, 0, 0.22) 0px -2px 8px, rgba(250, 106, 106, 0) 0 2px 12px;
+	border: 1px solid rgba(0, 0, 0, 0.28);
 }
 .indicator-view li.on .light {
-	background-color: #FF1C1C;
-	box-shadow: rgba(236, 8, 8, 0.76) 0 -1px 7px 1px, inset rgba(102, 0, 0, 1) 0px -2px 8px, rgba(250, 106, 106, 1) 0 2px 12px;
+	background-color: #FF0000;
+	box-shadow: rgba(255, 0, 0, 0.6) 0px 0px 5px 0px, inset rgba(255, 252, 0, 0.5) 0px 2px 0px, rgba(200, 198, 255, 0) 0px 0px 0px;
 }
 
 .indicator-view li .label {
@@ -146,15 +159,15 @@ html, body {
 }
 
 .numpad-view .hang-up a {
-	color: #901B1B;
+	color: #414141;
 	line-height: 2em;
-	background-color: rgb(255, 109, 109);
+	background-color: rgb(153, 160, 208);
 	text-shadow: -1px -1px 0px rgba(0, 0, 0, 0.1), 1px 1px 0px rgba(255, 255, 255, 0.5);
 }
 
 .numpad-view .engage a:after,
 .numpad-view .hang-up a:after {
-	border-color: #B15656;
+	border-color: #877BB2;
 }
 
 .numpad-view li:nth-child(3n+1) {

@@ -9,123 +9,77 @@ module.exports = RT023_ASSETS =
       "9": "start"
   start:
     text: """
-      You have reached to remote terminal access service for Corporation 4 5 2.
-      Press 1, for General Enquiries.
-      Press 2, to access services relating to our remote terminal products.
-      Press 3, for more information regarding any of our other products.
-      For HR related queries please press 7.
-      To return to the main menu, Press 9.
+	Welcome. In celebration of the wired dot co dot uk podcast's 200th episode. We are pround to bring you the following options.
+	If you are a regular listener, please Press 1.
+	If you'd like more infomation about the wired dot co dot uk, Press 2.
+	To leave a message, Press 5.
+	If you are, infact an employee of conday nast, or wired dot co dot uk, please press 7.
+	Press 9, to return to the main menu.
     """
     repeatDelay: 3000
     actions:
-      "1": "general"
-      "2": "terminalproducts"
-      "3": "products"
-      "7": "hr"
+      "1": "regular"
+      "2": "info"
+      "5": "message"
+      "7": "employee"
       "9": "start"
 
-  general: 
+  regular:
     text: """
-      This remote terminal service is provided as described in the R T 0 2 3 Field Handlers Manual page 7. 
-      Press 1 if you do not have a Field Handlers Manual for this device.
-      Press 2 to register a Remote Termial device.
-      Press 5 If you'd like to be transfered to our contracted Customer Support service.
-      To return to the main menu, Press 9.
+      Welcome listener, I'd always hoped that one day, our paths would cross.
+      Press 1, to reminisce about the past.
+      Press 2, for the most recent episode.
+      Press 9, to return to the main menu.
     """
     repeatDelay: 3000
     actions:
-      "1": "nomanual"
-      "2": "registerterminal"
-      "5": "customersupport"
-      "9": "start"
+     "9": "start"
 
-  nomanual:
+  info:
     text: """
-      The Field handlers Manual for this  R T 0 2 3 remote terminal device should have been provided to you during the induction phase of your field training.
-      If you have misplaced you're Manual please Press 1.
-      If you never completed field training or were not provided with a manual during this process please press 2.
-      If this terminal's manual has been destroyed as part of S O P, 4. F. 3., please press 3.
-      If you are following S O P, 3 0 1, please proceed by keying in the serial number of this device followed by the hash key.
-      To return to the main menu, Press 9.
+      You requested more information. What follows is the full wikipedia page transcript as of 28th of November 2014. Press 9, at any time to return to the main menu.
+      Wired UK is a full-colour monthly magazine that reports primarily on the effects of science and technology. It covers a broad range of topics including design, architecture, culture, the economy, politics and philosophy. Owned by Conday Nast Publications, it is published in London and is an offshoot of the original American Wired.
+
+Contents 
+1 History
+1.1 Current version (2009-present)
+1.2 Earlier version (mid-1990s)
+2 Wired Conference
+3 References
+4 External links
+History
+Current version (2009-present)
+The current version of the magazine was launched in April 2009, and was the second international version of Wired, after the launch of Wired Italia in March 2009. In November 2009, the British Society of Magazine Editors awarded Launch of the Year to Wired editor David Rowan. Nate Lanxon (formerly of CNET UK) took over position of editor for Wired.co.uk in January 2010.
+
+Earlier version (mid-1990s)
+
+Cover of the April 1995 launch issue.
+The magazine's current incarnation follows an earlier attempt at a British edition of Wired[2] which ran from April 1995[3] until March 1997.[4] It was initially created as a joint venture with the Guardian Media Group[5] and Wired US.'.s then owners, Wired Ventures, but that incarnation lasted only three[6] or four[7] issues, due to a culture clash between the two parties[2][5] and low sales figures of 25,000 per month.[6] Wired Ventures then ran the UK edition alone, with an almost entirely new staff,[8] until the magazine was closed with the March 1997 issue, when sales were at 40,000 magazines per month.[6]
+
+Wired Conference
+Wired UK, together with Telefonica, held a two-day event on 25-26 October 2012 at The Brewery in London. The conference was designed to "explore the ideas, innovations and people that are reshaping our world".[9] Among its speakers were David Karp, founder of microblogging platform Tumblr, and Mona Eltahawy, an Egyptian-American freelance journalist and commentator.
+
+Wired 2011, hosted between 13-14 October at the St. Pancras Renaissance London Hotel, included guest speakers Joanna Shields, Managing Director and Vice President of Facebook EMEA, and Gil Hirsch, founder of Face.com.[10]
     """
     repeatDelay: 3000
     actions:
-      "1": "lostmanual"
-      "2": "notraining"
-      "3": "manualdestroyed"
-      "00000": "sop301"
-      "9": "start"
+     "9": "start"
 
-  registerterminal: 
+  message:
     text: """
-       Before proceding with the device registration procedure A as descibed on Page 12 of the Field Handlers Manual. You are required to confirm the following
-       Press 1 if this device has not previously been registered.
-       Press 2 if this is not the first device to be registered to your Field Handler Identification Factor.
-       If you have the previously registered Field handlers Identification Factor ready to be entered, Press 4.
-       To return to the main menu, Press 9.
+      Start recording your message by pressing 1. To submit your message press the hash key.
     """
     repeatDelay: 3000
     actions:
-      "1": "notregistered"
-      "2": "nthdevice"
-      "4": "previousidfactor"
-      "9": "start"
+     "1": "#startRecordingAudio"
+     "#": "#submitRecordedAudio"
+     "9": "start"
+     "next": "leftmessage"
 
-  customersupport:
+  leftmessage:
     text: """
-      Please hold... ... one of our operators will be with you shortly.
-    """ 
-    repeatDelay: 5000
-    actions:
-      "9": "start"
-
-  hr:
-    text: """
-      Please hold...  ... one of our operators will be with you shortly.
-    """ 
-    repeatDelay: 5000
-    actions:
-      "9": "start"
-
-  terminalproducts:
-    text: """
-      To recieve a full catalogue of terminal products press 1.
-      If you are trying to register a terminal product press 2
-    """
-    repeatDelay: 3000
-    actions:
-      "1": "fullcatalogue"
-      "2": "registerterminal"
-
-  fullcatalogue:
-    text: """
-      The Full catalogue contains a total of 45 products...
-      For Products starting with letters A. through E., press 1.
-      For Products starting with letters F. through J., press 2.
-      For Products starting with letters K. through O., press 4.
-      Blah
-      Blah
-      Blah
-      To return to the main menu, Press 9.
+      Your message has been successfuly submitted, Press 9, to return to the main menu.
     """
     repeatDelay: 3000
     actions:
       "9": "start"
-
-  products:
-    text: """
-      The Full catalogue contains a total of 45 products...
-      For Products starting with letters A. through E., press 1.
-      For Products starting with letters F. through J., press 2.
-      For Products starting with letters K. through O., press 4.
-      Blah
-      Blah
-      Blah
-      To return to the main menu, Press 9.
-    """
-    repeatDelay: 3000
-    actions:
-      "9": "start"
-
-
-
