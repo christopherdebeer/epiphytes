@@ -3,29 +3,34 @@
   "version": "0.0.1",
   "description": "tts",
   "main": "main.coffee",
+  "postinstall": "npm install browserify",
   "scripts": {
     "generate-assets": "coffee src/generate-assets.coffee",
     "compile": "browserify -t coffeeify src/app.coffee > public/bundle.js",
+    "watch": "watchify browserify -t coffeeify src/app.coffee -o public/bundle.js",
+    "server": "coffee src/server.coffee",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Christopher de Beer",
   "license": "NONE",
   "dependencies": {
-    "mkdirp": "^0.5.0",
-    "node-tts-api": "0.0.5",
-    "underscore": "^1.7.0",
-    "coffeeify": "*",
     "body-parser": "^1.5.2",
+    "browserify": "^7.0.0",
+    "coffeeify": "*",
+    "crypto": "*",
     "errorhandler": "^1.1.1",
     "express": "^4.8.0",
     "express-session": "^1.7.2",
     "jade": "^1.5.0",
     "method-override": "^2.1.2",
-    "morgan": "^1.2.2",
-    "serve-favicon": "^2.0.1",
-    "node-uuid": "*",
-    "crypto": "*",
     "mime": "*",
-    "moment": "*"
+    "mkdirp": "^0.5.0",
+    "moment": "*",
+    "morgan": "^1.2.2",
+    "node-tts-api": "0.0.5",
+    "node-uuid": "*",
+    "serve-favicon": "^2.0.1",
+    "underscore": "^1.7.0",
+    "watchify": "^2.1.1"
   }
 }

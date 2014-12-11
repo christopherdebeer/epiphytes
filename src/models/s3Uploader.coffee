@@ -22,7 +22,7 @@ module.exports = (Backbone) ->
 		_formData: (fields) ->
 			fd = new FormData()
 			for fieldName, fieldValue of fields
-				fd.append( fieldName, FieldValue )
+				fd.append( fieldName, fieldValue )
 			fd.append( 'file', @blob.data ? blob )
 			fd
 
