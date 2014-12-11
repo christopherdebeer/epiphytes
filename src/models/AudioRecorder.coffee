@@ -35,5 +35,16 @@ module.exports = ( Backbone, Recorder ) ->
 			@recorder && @recorder.exportWAV (blob) =>
 				@recorder.clear()
 				url = URL.createObjectURL(blob)
-				console.log "WAV blob:", blob, url
+				console.log "WAV blob:", blob.toString(), url
+				data = new FormData();
+				data.append('file', blob);
 				@trigger( 'webaudio:done', { blob, url } )
+				jQuery.ajax
+					type: "POST"
+					url: '/message/test'
+					success: =>
+						console.log "upload success"
+					data: data
+					contentType: false
+					processData: false
+

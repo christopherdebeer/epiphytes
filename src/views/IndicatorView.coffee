@@ -18,17 +18,7 @@ module.exports = (Marionette) ->
 
 		initialize: ({ @audioRecorder }) ->
 			@listenTo @audioRecorder, 'webaudio:record', => @toggleRecording( true )
-			@listenTo @audioRecorder, 'webaudio:done', => @toggleRecording( false )
-			setTimeout( @tick, 500 )
-		
-		tick: =>
-			els = @$el.find( '.on' )
-			els.toggleClass( 'on' )
-			setTimeout( ( =>
-				els.toggleClass( 'on' )
-				@tick()
-			), 500 )
-	
+			@listenTo @audioRecorder, 'webaudio:done', => @toggleRecording( false )	
 				
 		toggleMessage: (force) ->
 			console.log "toggle message indicator", force

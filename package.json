@@ -6,6 +6,7 @@
   "scripts": {
     "generate-assets": "coffee src/generate-assets.coffee",
     "compile": "browserify -t coffeeify src/app.coffee > public/bundle.js",
+    "server": "npm run compile && coffee src/server.coffee",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Christopher de Beer",
@@ -22,6 +23,10 @@
     "jade": "^1.5.0",
     "method-override": "^2.1.2",
     "morgan": "^1.2.2",
-    "serve-favicon": "^2.0.1"
+    "serve-favicon": "^2.0.1",
+    "connect-busboy": "0.0.2",
+    "aws-sdk": "~2.0.30",
+    "s3-upload-stream": "~1.0.7",
+    "formidable": "~1.0.15"
   }
 }
