@@ -1,12 +1,12 @@
-express = require('express')
 path = require('path')
-
-favicon = require('serve-favicon')
 logger = require('morgan')
-methodOverride = require('method-override')
+express = require('express')
 session = require('express-session')
+favicon = require('serve-favicon')
 bodyParser = require('body-parser')
 errorHandler = require('errorhandler')
+methodOverride = require('method-override')
+s3Signer = require( './s3-signer.coffee' )
 
 app = express()
 
@@ -27,6 +27,8 @@ app.use( express.static( dir ) )
 
 app.get '/', (req, res) ->
 	res.sendFile(  path.join dir, 'index.html' )
+
+app.get( '/signed', s3Signer.signed )
 	
 
 # error handling middleware should be loaded after the loading the routes
