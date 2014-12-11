@@ -158,7 +158,7 @@ html, body {
 	transition: top .035s ease-in;
 	box-shadow: -1px 3px 3px rgba(0,0,0,0.1);
 	text-shadow: -1px -1px 0px rgba(0, 0, 0, 0.1), 1px 1px 0px rgba(255, 255, 255, 1);
-	min-height: 4.1em;
+	min-height: 4.5em;
 }
 
 .numpad-view li a .alpha,

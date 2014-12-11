@@ -1,14 +1,14 @@
-express = require('express')
 path = require('path')
-fs = require('fs')
-
-favicon = require('serve-favicon')
 logger = require('morgan')
-methodOverride = require('method-override')
+express = require('express')
 session = require('express-session')
+favicon = require('serve-favicon')
 bodyParser = require('body-parser')
 errorHandler = require('errorhandler')
-formidable = require('formidable')
+
+methodOverride = require('method-override')
+s3Signer = require( './s3-signer.coffee' )
+
 app = express()
 
 # all environments
@@ -28,45 +28,10 @@ app.use( express.static( dir ) )
 
 
 app.get '/', (req, res) ->
-    res.sendFile(  path.join dir, 'index.html' )
+	res.sendFile(  path.join dir, 'index.html' )
 
-
-
-AWS = require('aws-sdk')
-AWS.config.update
-    accessKeyId: 'AKIAJMBFZSOZAL4VYPWA'
-    secretAccessKey: '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'
-
-s3 = new AWS.S3()
-
-
-
-
-app.post '/message/:id', (req, res) ->
-    console.log "MESSAGE POST: ", req.params.id
-    form = new formidable.IncomingForm()
-    form.uploadDir = path.join __dirname, "../messages"
-    form.keepExtensions = true;
-
-    form.parse req, (err, fields, files) ->
-        return if err or !files 
-        console.log( "Uploading to s3: ", files.file )
-        file = files.file
-
-        params =
-            Bucket: 'wired200'
-            Key: req.params.id
-            ACL: 'public-read'
-            Body: fs.createReadStream( file.path )
-            ContentLength: file.size
-
-        s3.putObject params, (err, data) ->
-            if err
-                console.log "ERROR uploading to s3 <<<"
-                console.log( err, err.stack )
-            else 
-                console.log( "upload to s3 done: ", data )
-
+app.get( '/signed', s3Signer.signed )
+	
 
 # error handling middleware should be loaded after the loading the routes
 if 'development' == app.get('env')

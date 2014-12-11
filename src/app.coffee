@@ -34,8 +34,6 @@ class AppView extends Marionette.LayoutView
         @indicatorView = new IndicatorView( audioRecorder: @audioRecorder )
         @numpadView = new NumpadView()
 
-
-
         @listenTo @audioRecorder, 'webaudio:ok', =>
             console.log "web audio gotten!!!"
             @introView.enableProceed()
@@ -55,6 +53,8 @@ class AppView extends Marionette.LayoutView
             console.log "processing submit audio event for state: ", state
             @listenToOnce @audioRecorder, 'webaudio:done', ({blob, url}) =>
                 console.log "recording done: ", blob, url
+                uploader = new S3Uploader( blob: blob )
+                
                 @player.next()
             @audioRecorder.stopRecording()
 
@@ -69,9 +69,11 @@ class AppView extends Marionette.LayoutView
 
 
 
+window.app = this
 Recorder = require( './recorder.js' )
 
 AudioRecorder = require( './models/AudioRecorder.coffee' )( Backbone, Recorder )
+S3Uploader = require( './models/s3Uploader.coffee' )( Backbone )
 Player = require( './models/Player.coffee' )( Backbone )
 Sound = require( './models/Sound.coffee' )( Backbone, Howl )
 State = require( './models/State.coffee' )( Backbone, Sound )
