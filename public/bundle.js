@@ -1,6 +1,5 @@
-<<<<<<< HEAD
-(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-var AppView, AudioRecorder, IndicatorView, InputController, IntroView, NumpadView, Player, Recorder, Sound, State, StateCollection, appRegion, appView, states,
+(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+var AppView, AudioRecorder, IndicatorView, InputController, IntroView, NumpadView, Player, Recorder, S3Uploader, Sound, State, StateCollection, appRegion, appView, states,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
@@ -42,7 +41,11 @@ AppView = (function(_super) {
 
   AppView.prototype.className = 'app-view';
 
-  AppView.prototype.template = _.template("<div class=\"overlay-region\"></div>\n<div class=\"indicator-region\"></div>\n<div class=\"numpad-region\"></div>\n<p class=\"reg\">&copy; Wierd 200. RT023</p>");
+  AppView.prototype.template = _.template("<div class=\"overlay-region\"></div>\n<div class=\"indicator-region\"></div>\n<div class=\"numpad-region\"></div>\n\n<p>\n    <span class=\"help\">Info?</span>\n    <span class=\"reg\">&copy; Wierd 200. RT023</span>\n</p>");
+
+  AppView.prototype.events = {
+    'click .help': '_handleClickHelp'
+  };
 
   AppView.prototype.regions = {
     overlayRegion: '.overlay-region',
@@ -60,18 +63,14 @@ AppView = (function(_super) {
     this.inputController = new InputController({
       player: this.player
     });
-    this.introView = new IntroView();
+    this.introView = new IntroView({
+      audioRecorder: this.audioRecorder
+    });
     this.indicatorView = new IndicatorView({
       audioRecorder: this.audioRecorder
     });
     this.numpadView = new NumpadView();
-    this.listenTo(this.audioRecorder, 'webaudio:ok', (function(_this) {
-      return function() {
-        console.log("web audio gotten!!!");
-        return _this.introView.enableProceed();
-      };
-    })(this));
-    this.listenTo(this.introView, 'close', function() {
+    this.listenToOnce(this.introView, 'close', function() {
       return this.introView.destroy();
     });
     this.listenTo(this.numpadView, 'end', (function(_this) {
@@ -99,9 +98,13 @@ AppView = (function(_super) {
       return function(state) {
         console.log("processing submit audio event for state: ", state);
         _this.listenToOnce(_this.audioRecorder, 'webaudio:done', function(_arg1) {
-          var blob, url;
+          var blob, uploader, url;
           blob = _arg1.blob, url = _arg1.url;
           console.log("recording done: ", blob, url);
+          uploader = new S3Uploader({
+            blob: blob,
+            title: 'test'
+          });
           return _this.player.next();
         });
         return _this.audioRecorder.stopRecording();
@@ -115,6 +118,18 @@ AppView = (function(_super) {
     return this.indicatorRegion.show(this.indicatorView);
   };
 
+  AppView.prototype._handleClickHelp = function() {
+    this.introView = new IntroView({
+      audioRecorder: this.audioRecorder
+    });
+    this.listenToOnce(this.introView, 'close', (function(_this) {
+      return function() {
+        return _this.introView.destroy();
+      };
+    })(this));
+    return this.overlayRegion.show(this.introView);
+  };
+
   AppView.prototype.onClose = function() {
     return this.player.stop();
   };
@@ -123,9 +138,13 @@ AppView = (function(_super) {
 
 })(Marionette.LayoutView);
 
+window.app = this;
+
 Recorder = require('./recorder.js');
 
 AudioRecorder = require('./models/AudioRecorder.coffee')(Backbone, Recorder);
+
+S3Uploader = require('./models/s3Uploader.coffee')(Backbone);
 
 Player = require('./models/Player.coffee')(Backbone);
 
@@ -165,7 +184,8 @@ $(function() {
 });
 
 
-},{"./models/AudioRecorder.coffee":2,"./models/Player.coffee":3,"./models/Sound.coffee":4,"./models/State.coffee":5,"./models/StateCollection.coffee":6,"./recorder.js":7,"./views/IndicatorView.coffee":8,"./views/IntroView.coffee":9,"./views/NumpadView.coffee":10}],2:[function(require,module,exports){
+
+},{"./models/AudioRecorder.coffee":2,"./models/Player.coffee":3,"./models/Sound.coffee":4,"./models/State.coffee":5,"./models/StateCollection.coffee":6,"./models/s3Uploader.coffee":7,"./recorder.js":8,"./views/IndicatorView.coffee":9,"./views/IntroView.coffee":10,"./views/NumpadView.coffee":11}],2:[function(require,module,exports){
 var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -184,6 +204,10 @@ module.exports = function(Backbone, Recorder) {
     }
 
     AudioRecorder.prototype.initialize = function() {
+      return this.requestAudio();
+    };
+
+    AudioRecorder.prototype.requestAudio = function() {
       var err;
       try {
         window.AudioContext = window.AudioContext || window.webkitAudioContext;
@@ -199,7 +223,12 @@ module.exports = function(Backbone, Recorder) {
       }, this.doneGettingUserAudio, this.errorGettingUserAudio);
     };
 
+    AudioRecorder.prototype.isConnected = function() {
+      return this.recorder != null;
+    };
+
     AudioRecorder.prototype.doneGettingUserAudio = function(stream) {
+      console.log('recorder', this.recorder);
       this.input = this.audioContext.createMediaStreamSource(stream);
       this.recorder = new Recorder(this.input);
       return this.trigger('webaudio:ok');
@@ -226,25 +255,13 @@ module.exports = function(Backbone, Recorder) {
     AudioRecorder.prototype.completeRecording = function() {
       return this.recorder && this.recorder.exportWAV((function(_this) {
         return function(blob) {
-          var data, url;
+          var url;
           _this.recorder.clear();
           url = URL.createObjectURL(blob);
           console.log("WAV blob:", blob.toString(), url);
-          data = new FormData();
-          data.append('file', blob);
-          _this.trigger('webaudio:done', {
+          return _this.trigger('webaudio:done', {
             blob: blob,
             url: url
-          });
-          return jQuery.ajax({
-            type: "POST",
-            url: '/message/test',
-            success: function() {
-              return console.log("upload success");
-            },
-            data: data,
-            contentType: false,
-            processData: false
           });
         };
       })(this));
@@ -254,6 +271,7 @@ module.exports = function(Backbone, Recorder) {
 
   })(Backbone.Model);
 };
+
 
 
 },{}],3:[function(require,module,exports){
@@ -322,6 +340,7 @@ module.exports = function(Backbone) {
 };
 
 
+
 },{}],4:[function(require,module,exports){
 var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   __hasProp = {}.hasOwnProperty,
@@ -383,6 +402,7 @@ module.exports = function(Backbone, Howl) {
 };
 
 
+
 },{}],5:[function(require,module,exports){
 var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   __hasProp = {}.hasOwnProperty,
@@ -424,6 +444,7 @@ module.exports = function(Backbone, Sound) {
 };
 
 
+
 },{}],6:[function(require,module,exports){
 var __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -459,7 +480,70 @@ module.exports = function(Backbone, State) {
 };
 
 
+
 },{}],7:[function(require,module,exports){
+var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
+  __hasProp = {}.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+module.exports = function(Backbone) {
+  var S3Uploader;
+  return S3Uploader = (function(_super) {
+    __extends(S3Uploader, _super);
+
+    function S3Uploader() {
+      this._formData = __bind(this._formData, this);
+      this._getSigned = __bind(this._getSigned, this);
+      this._upload = __bind(this._upload, this);
+      return S3Uploader.__super__.constructor.apply(this, arguments);
+    }
+
+    S3Uploader.prototype.initialize = function(_arg) {
+      this.blob = _arg.blob, this.title = _arg.title;
+      return this._getSigned();
+    };
+
+    S3Uploader.prototype._upload = function(data, status, xhr) {
+      console.log(arguments, 'uploading to s3...');
+      return $.ajax({
+        url: data.url,
+        type: 'PUT',
+        data: this._formData(data.fields),
+        processData: false,
+        done: function() {
+          return console.log("upload done", arguments);
+        }
+      });
+    };
+
+    S3Uploader.prototype._getSigned = function() {
+      return $.ajax({
+        url: "/signed?title=" + this.title,
+        dataType: 'json',
+        type: 'GET',
+        success: this._upload
+      });
+    };
+
+    S3Uploader.prototype._formData = function(fields) {
+      var fd, fieldName, fieldValue, _ref;
+      fd = new FormData();
+      for (fieldName in fields) {
+        fieldValue = fields[fieldName];
+        fd.append(fieldName, fieldValue);
+      }
+      fd.append('file', (_ref = this.blob.data) != null ? _ref : this.blob);
+      return fd;
+    };
+
+    return S3Uploader;
+
+  })(Backbone.Model);
+};
+
+
+
+},{}],8:[function(require,module,exports){
 
   var WORKER_PATH = '/recorderWorker.js';
 
@@ -547,7 +631,7 @@ module.exports = function(Backbone, State) {
 
   module.exports = Recorder;
 
-},{}],8:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -602,7 +686,8 @@ module.exports = function(Marionette) {
 };
 
 
-},{}],9:[function(require,module,exports){
+
+},{}],10:[function(require,module,exports){
 var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -619,23 +704,37 @@ module.exports = function(Marionette) {
 
     IntroView.prototype.className = 'intro-view';
 
-    IntroView.prototype.template = _.template("<h3>FeedbackLoop Terminal</h3>\n<p>Made with <span class=\"heart\">&#10084;</span>, in celebration of the Wired.co.uk podcast's 200th episode.</p>\n<p>We recommend headphones, and allowing your browser to access your microphone.</p>\n<p>When you're ready, press the <span class=\"redial\">R (MEM)</span> button to start.</p>\n<button class=\"ok\">Continue</button>\n<em>* Microphone access required to continue.</em>");
+    IntroView.prototype.template = _.template("<h3>FeedbackLoop Terminal</h3>\n<p>Made with <span class=\"heart\">&#10084;</span>, in celebration of the Wired.co.uk podcast's 200th episode.</p>\n<p>We recommend headphones, and allowing your browser to access your microphone.</p>\n<p>When you're ready, press the <span class=\"redial\">R (MEM)</span> button to start.</p>\n<button class=\"ok\">Continue</button>\n<em>* Microphone access required to continue. <span class=\"retry\">Retry?</span></em>");
 
     IntroView.prototype.events = {
-      'click .ok': "_handleClickOk"
+      'click .ok': "_handleClickOk",
+      'click .retry': "_handleClickRetry"
     };
 
-    IntroView.prototype.initialize = function() {
-      return this.audioOk = false;
+    IntroView.prototype.initialize = function(_arg) {
+      this.audioRecorder = _arg.audioRecorder;
+      return this.listenTo(this.audioRecorder, 'webaudio:ok', (function(_this) {
+        return function() {
+          console.log("web audio gotten!!!");
+          return _this.updateClass();
+        };
+      })(this));
     };
 
-    IntroView.prototype.enableProceed = function() {
-      this.$el.addClass("ok");
-      return this.audioOk = true;
+    IntroView.prototype.onShow = function() {
+      return this.updateClass();
+    };
+
+    IntroView.prototype.updateClass = function() {
+      return this.$el.toggleClass("ok", this.audioRecorder.isConnected());
+    };
+
+    IntroView.prototype._handleClickRetry = function() {
+      return this.audioRecorder.requestAudio();
     };
 
     IntroView.prototype._handleClickOk = function() {
-      if (this.audioOk) {
+      if (this.audioRecorder.isConnected()) {
         return this.trigger('close');
       }
     };
@@ -646,7 +745,8 @@ module.exports = function(Marionette) {
 };
 
 
-},{}],10:[function(require,module,exports){
+
+},{}],11:[function(require,module,exports){
 var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -748,8 +848,5 @@ module.exports = function(Marionette, Sound) {
 };
 
 
-},{}]},{},[1])
-||||||| merged common ancestors
-=======
-console.error("Error: Cannot find module 'C:\\Users\\cdbeer\\eth\\epiphyte\\browserify' from 'C:\\Users\\cdbeer\\eth\\epiphyte'")
->>>>>>> wired200
+
+},{}]},{},[1]);

@@ -7,6 +7,9 @@ RUN cd /var/app && npm install
 ADD src* /var/app/src/
 ADD public* /var/app/public/
 
+ENV AWS_ACCESS_KEY_ID AKIAI3TE2KLVIZ37LRUA
+ENV AWS_SECRET_ACCESS_KEY 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
+
 RUN npm install -g coffee-script
 RUN npm install -g http-server
 RUN npm install -g browserify 

@@ -18,8 +18,14 @@ class AppView extends Marionette.LayoutView
         <div class="overlay-region"></div>
         <div class="indicator-region"></div>
         <div class="numpad-region"></div>
-        <p class="reg">&copy; Wierd 200. RT023</p>
+
+        <p>
+            <span class="help">Info?</span>
+            <span class="reg">&copy; Wierd 200. RT023</span>
+        </p>
     """
+    events:
+        'click .help': '_handleClickHelp'
     regions:
         overlayRegion: '.overlay-region'
         indicatorRegion: '.indicator-region'
@@ -30,15 +36,11 @@ class AppView extends Marionette.LayoutView
         @audioRecorder = new AudioRecorder()
         @inputController = new InputController( player: @player )
 
-        @introView = new IntroView()
+        @introView = new IntroView( audioRecorder: @audioRecorder )
         @indicatorView = new IndicatorView( audioRecorder: @audioRecorder )
         @numpadView = new NumpadView()
 
-        @listenTo @audioRecorder, 'webaudio:ok', =>
-            console.log "web audio gotten!!!"
-            @introView.enableProceed()
-
-        @listenTo @introView, 'close', ->
+        @listenToOnce @introView, 'close', ->
             @introView.destroy()
 
         @listenTo @numpadView, 'end', => @player.setState( '' )
@@ -53,8 +55,7 @@ class AppView extends Marionette.LayoutView
             console.log "processing submit audio event for state: ", state
             @listenToOnce @audioRecorder, 'webaudio:done', ({blob, url}) =>
                 console.log "recording done: ", blob, url
-                uploader = new S3Uploader( blob: blob )
-                
+                uploader = new S3Uploader( blob: blob, title: 'test' )  
                 @player.next()
             @audioRecorder.stopRecording()
 
@@ -62,6 +63,12 @@ class AppView extends Marionette.LayoutView
         @overlayRegion.show( @introView )
         @numpadRegion.show( @numpadView )
         @indicatorRegion.show( @indicatorView )
+
+    _handleClickHelp: ->
+        @introView = new IntroView( audioRecorder: @audioRecorder )
+        @listenToOnce @introView, 'close', =>
+            @introView.destroy()
+        @overlayRegion.show( @introView )
     
     onClose: ->
         @player.stop()

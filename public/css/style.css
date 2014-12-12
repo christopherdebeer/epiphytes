@@ -61,12 +61,20 @@ html, body {
 	cursor: pointer;
 }
 
-.reg {
+.reg,
+.help {
 	margin: 0;
 	padding: 0 1.4em;
 	font-family: monospace;
-	text-align: right;
 	color: #666;
+}
+.reg {
+	float: right;
+}
+
+.help, .retry {
+	text-decoration: underline;
+	cursor: pointer;
 }
 
 .indicator-view {

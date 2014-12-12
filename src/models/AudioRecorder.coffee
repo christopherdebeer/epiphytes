@@ -2,6 +2,9 @@
 module.exports = ( Backbone, Recorder ) ->
 	class AudioRecorder extends Backbone.Model
 		initialize: ->
+			@requestAudio()
+
+		requestAudio: ->
 			try
 				window.AudioContext = window.AudioContext || window.webkitAudioContext
 				navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia
@@ -11,7 +14,9 @@ module.exports = ( Backbone, Recorder ) ->
 				@errorGettingUserAudio( err )
 			navigator.getUserMedia( { audio: true }, @doneGettingUserAudio, @errorGettingUserAudio )
 
+		isConnected: -> @recorder?
 		doneGettingUserAudio: (stream) =>
+			console.log 'recorder', @recorder
 			@input = @audioContext.createMediaStreamSource( stream )
 			@recorder = new Recorder( @input )
 			@trigger 'webaudio:ok'
@@ -36,15 +41,5 @@ module.exports = ( Backbone, Recorder ) ->
 				@recorder.clear()
 				url = URL.createObjectURL(blob)
 				console.log "WAV blob:", blob.toString(), url
-				data = new FormData();
-				data.append('file', blob);
 				@trigger( 'webaudio:done', { blob, url } )
-				jQuery.ajax
-					type: "POST"
-					url: '/message/test'
-					success: =>
-						console.log "upload success"
-					data: data
-					contentType: false
-					processData: false
 

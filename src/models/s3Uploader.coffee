@@ -4,13 +4,14 @@ module.exports = (Backbone) ->
 			@_getSigned()
 
 		_upload: (data, status, xhr) =>
-			console.log arguments, 'uploading TODO'
+			console.log arguments, 'uploading to s3...'
 			$.ajax
-				url: "http://wired200.s3.amazonaws.com"
+				url: data.url
 				type: 'PUT'
-				data: @_formData( data )
+				data: @_formData( data.fields )
+				processData: false
 				done: ->
-					console.log "uplaod done", arguments
+					console.log "upload done", arguments
 	
 		_getSigned: =>
 			$.ajax
@@ -19,11 +20,11 @@ module.exports = (Backbone) ->
 				type: 'GET'
 				success: @_upload
 
-		_formData: (fields) ->
+		_formData: (fields) =>
 			fd = new FormData()
 			for fieldName, fieldValue of fields
 				fd.append( fieldName, fieldValue )
-			fd.append( 'file', @blob.data ? blob )
+			fd.append( 'file', @blob.data ? @blob )
 			fd
 
 	

@@ -7,17 +7,25 @@ module.exports = (Marionette) ->
             <p>We recommend headphones, and allowing your browser to access your microphone.</p>
             <p>When you're ready, press the <span class="redial">R (MEM)</span> button to start.</p>
             <button class="ok">Continue</button>
-            <em>* Microphone access required to continue.</em>
+            <em>* Microphone access required to continue. <span class="retry">Retry?</span></em>
         """
         events:
             'click .ok': "_handleClickOk"
+            'click .retry': "_handleClickRetry"
 
-        initialize: ->
-            @audioOk = false
+        initialize: ({@audioRecorder})->
+            @listenTo @audioRecorder, 'webaudio:ok', =>
+                console.log "web audio gotten!!!"
+                @updateClass()
 
-        enableProceed: ->
-            @$el.addClass "ok"
-            @audioOk = true
+        onShow: ->
+            @updateClass()
+
+        updateClass: ->
+            @$el.toggleClass "ok", @audioRecorder.isConnected()
+
+        _handleClickRetry: ->
+            @audioRecorder.requestAudio()
 
         _handleClickOk: =>
-            @trigger( 'close' ) if @audioOk
+            @trigger( 'close' ) if @audioRecorder.isConnected()
