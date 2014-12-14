@@ -9,7 +9,7 @@ module.exports = RT023_ASSETS =
       "9": "start"
   start:
     text: """
-	Welcome. In celebration of the wired dot co dot uk podcast's 200th episode. We are pround to bring you the following options.
+	Welcome. In celebration of the wired dot co dot uk podcast's 200th episode. We are proud to bring you the following options.
 	If you are a regular listener, please Press 1.
 	If you'd like more infomation, Press 2.
 	To leave a message, Press 5.
@@ -118,7 +118,7 @@ module.exports = RT023_ASSETS =
     text: """
       This application, or feedback loop interface terminal, was created by Christopher de Beer as a gift to the wired dot co dot uk podcast team. It was made in haste, but with much love and admiration for the show that has informed more than its fair share of citizens of the web. 
 
-        The appplication was built, thanks to and using some awesome new web technologies including but not limited to the following: Docker, The new Web Audio API, vim, node JS, and the freely available Text To Speech API, available at: TTS hyphen API dot com.
+        The appplication was built, thanks to and using but not limited to the following: Docker, The new Web Audio API, vim, Backbone, and Node JS. Text To Speech API provided by: TTS hyphen API dot com.
 
       Press 9, to return to the main menu.
 
