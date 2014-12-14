@@ -28,7 +28,7 @@ module.exports = RT023_ASSETS =
     text: """
       Welcome listener, I'd always hoped that one day, our paths would cross.
       Press 1, to reminisce about the past.
-      Press 2, ask the wired podcast hosts a question.
+      Press 2, to ask the wired podcast hosts a question.
       Press 3, to contribute to the feedback loop. 
       Press 9, to return to the main menu.
     """
