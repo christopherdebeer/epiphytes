@@ -58,7 +58,7 @@ module.exports = RT023_ASSETS =
 
   employee:
     text: """
-      First, I would like to take this opportunity to thank you for the work you have done, and cannot express enough how much listening to Nate, Liat, Kattie and Olivia every week has been a pleasure and a privilege.
+      First, I would like to take this opportunity to thank you for the work you have done, and cannot express enough how much listening to Nate, Duncan, Liat, Katie and Olivia every week has been a pleasure and a privilege.
 
       What follows is a series of questions for you from a fan of the show.
 
