@@ -34,8 +34,10 @@
     "formidable": "~1.0.15",
     "node-tts-api": "0.0.5",
     "node-uuid": "*",
-    "serve-favicon": "^2.0.1",
     "underscore": "^1.7.0",
-    "watchify": "^2.1.1"
+    "watchify": "^2.1.1",
+    "connect-multiparty": "~1.2.5",
+    "express-fileuploader-s3": "0.0.1",
+    "express-fileuploader": "0.0.7"
   }
 }
